@@ -4,17 +4,6 @@ var Benchmark = require('benchmark');
 var sjmp      = require('../lib/sjmp');
 var suite     = new Benchmark.Suite;
 
-console.log(  sjmp.serialize({
-  type: '<',
-  method: 'get',
-  version: 1,
-  resource: 'some/resource',
-  id: 'MessageId',
-  date: 1395591341000,
-  headers: {},
-  body: 'request body'
-}, false));
-
 
 function test1() {
   sjmp.serialize({
