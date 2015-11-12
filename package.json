@@ -1,6 +1,6 @@
 {
   "name": "sjmp",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "Simple JSON Message Protocol",
   "main": "index.js",
   "scripts": {

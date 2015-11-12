@@ -131,7 +131,8 @@ describe('Serialize', function() {
   it('serialize various date format', function() {
     var tests = [
       { type: '>', status: 200, resource: 'some/resource', id: 'idid', date: 1426379946762 },
-      { type: '>', status: 200, resource: 'some/resource', id: 'idid', date: '2015-03-15T00:39:06.762Z' }
+      { type: '>', status: 200, resource: 'some/resource', id: 'idid', date: '2015-03-15T00:39:06.762Z' },
+      { type: '>', status: 200, resource: 'some/resource', id: 'idid', date: new Date(1426379946762) }
     ];
 
     for (i = 0; i < tests.length; ++i) {
