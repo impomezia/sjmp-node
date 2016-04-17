@@ -1,3 +1,6 @@
+# v1.1.2
+ - Improve test coverage.
+
 # v1.1.1
  - Fix date serialization.
 
