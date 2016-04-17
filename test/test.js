@@ -1,3 +1,5 @@
+'use strict';
+
 var sjmp   = require('../index');
 var expect = require('chai').expect;
 
@@ -129,16 +131,32 @@ describe('Serialize', function() {
   });
 
   it('serialize various date format', function() {
-    var tests = [
+    const tests = [
       { type: '>', status: 200, resource: 'some/resource', id: 'idid', date: 1426379946762 },
+      { type: '>', status: 200, resource: 'some/resource', id: 'idid', date: '1426379946762' },
       { type: '>', status: 200, resource: 'some/resource', id: 'idid', date: '2015-03-15T00:39:06.762Z' },
       { type: '>', status: 200, resource: 'some/resource', id: 'idid', date: new Date(1426379946762) }
     ];
 
-    for (i = 0; i < tests.length; ++i) {
-      result = sjmp.serialize(tests[i], true);
+    for (let i of tests) {
+      expect(sjmp.serialize(i, true)).to.deep.equal('[">","some/resource","idid",1426379946762,{},null]');
+    }
 
-      expect(result).to.deep.equal('[">","some/resource","idid",1426379946762,{},null]');
+    expect(sjmp.serialize({ type: '>', resource: 'r', id: '1234', date: {} }, true)).to.deep.equal('[">","r","1234",0,{},null]');
+  });
+
+  it('Invalid packets should be serialized as null', () => {
+    const invalid = [
+      0,
+      { type: '<', method: 'get', resource: 'some/resource', date: 0, headers: {}, body: 'request body' },
+      { type: '<', method: 'get', resource: 'some/resource', id: '123', date: 0, headers: {}, body: 'request body' },
+      { type: '<', method: 'get', id: '1234', date: 0, headers: {}, body: 'request body' },
+      { method: 'get', resource: 'some/resource', id: '1234', date: 0, headers: {}, body: 'request body' },
+      { type: '<', method: 'get', resource: 'some/resource', id: '1234', date: 0, headers: this, body: 'request body' }
+    ];
+
+    for (let i of invalid) {
+      expect(sjmp.serialize(i, true)).to.be.a('null');
     }
   });
 });
@@ -219,7 +237,7 @@ describe('Deserialize', function() {
   });
 
   it('Invalid packets should be deserialized as null', function() {
-    var invalid = [
+    const invalid = [
       undefined,
       null,
       [],
@@ -230,6 +248,8 @@ describe('Deserialize', function() {
       '[">bad", "res", "packet-id"]',
       '[">", 200, 0]',
       '[">", 200, "id"]',
+      '<b>',
+      '["<", "res", "123"]'
     ];
 
     for (i = 0; i < invalid.length; ++i) {
