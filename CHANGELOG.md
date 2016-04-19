@@ -1,3 +1,6 @@
+# v1.1.3
+ - Restore ES5 compatibility.
+
 # v1.1.2
  - Improve test coverage.
 
