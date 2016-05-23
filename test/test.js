@@ -1,134 +1,95 @@
 'use strict';
 
-var sjmp   = require('../index');
 var expect = require('chai').expect;
-
-
-var request = {
-  type: '<',
-  method: 'get',
-  version: 1,
-  resource: 'some/resource',
-  id: 'MessageId',
-  date: 1395591341000,
-  headers: {},
-  body: 'request body'
-};
-
-
-var reply = {
-  type: '>',
-  status: 400,
-  resource: 'some/resource',
-  version: 1,
-  id: 'MessageId',
-  date: 1395591341000,
-  headers: {},
-  body: 'reply body'
-};
-
-
-var modified = {
-  type: '=',
-  version: 1,
-  resource: 'some/resource',
-  id: 'MessageId',
-  date: 1395591341000,
-  headers: {},
-  body: 'modified resource body'
-};
-
-
-var added = {
-  type: '+',
-  version: 1,
-  resource: 'some/resource',
-  id: 'MessageId',
-  date: 1395591341000,
-  headers: {},
-  body: 'added resource body'
-};
-
-
-var deleted = {
-  type: '-',
-  version: 1,
-  resource: 'some/resource',
-  id: 'MessageId',
-  date: 1395591341000,
-  headers: {},
-  body: 'deleted resource body'
-};
+var sjmp   = require('../index');
+var mock   = require('./mock');
 
 
 describe('Serialize', function() {
-  var result;
-  var i;
-
   it('serialize request', function() {
-    var result = sjmp.serialize(request, false);
+    var result = sjmp.serialize(mock.request(1), false);
 
     expect(result).to.be.an('array');
     expect(result).to.have.length(6);
     expect(result).to.deep.equal(['<', 'some/resource', 'MessageId', 1395591341000, {}, 'request body']);
 
-    result = sjmp.serialize(request, true);
-
-    expect(result).to.be.an('string');
-    expect(result).to.deep.equal('["<","some/resource","MessageId",1395591341000,{},"request body"]');
+    result = sjmp.serialize(mock.request(1), true);
+    expect(result).to.be.a('string').and.to.deep.equal('["<","some/resource","MessageId",1395591341000,{},"request body"]');
   });
 
+
+  it('serialize request [v2]', function() {
+    expect(sjmp.serialize(mock.request(2))[0]).to.equal('</2');
+  });
+
+
   it('serialize reply', function() {
-    var result = sjmp.serialize(reply, false);
+    var result = sjmp.serialize(mock.reply(1), false);
 
     expect(result).to.be.an('array');
     expect(result).to.have.length(6);
     expect(result).to.deep.equal(['>400', 'some/resource', 'MessageId', 1395591341000, {}, 'reply body']);
 
-    result = sjmp.serialize(reply, true);
-
-    expect(result).to.be.an('string');
-    expect(result).to.deep.equal('[">400","some/resource","MessageId",1395591341000,{},"reply body"]');
+    result = sjmp.serialize(mock.reply(1), true);
+    expect(result).to.be.a('string').and.to.deep.equal('[">400","some/resource","MessageId",1395591341000,{},"reply body"]');
   });
 
+
+  it('serialize reply [v2]', function() {
+    expect(sjmp.serialize(mock.reply(2))[0]).to.equal('>400/2');
+  });
+
+
   it('serialize modified', function() {
-    var result = sjmp.serialize(modified, false);
+    var result = sjmp.serialize(mock.modified(1), false);
 
     expect(result).to.be.an('array');
     expect(result).to.have.length(6);
     expect(result).to.deep.equal(['=', 'some/resource', 'MessageId', 1395591341000, {}, 'modified resource body']);
 
-    result = sjmp.serialize(modified, true);
-
-    expect(result).to.be.an('string');
-    expect(result).to.deep.equal('["=","some/resource","MessageId",1395591341000,{},"modified resource body"]');
+    result = sjmp.serialize(mock.modified(1), true);
+    expect(result).to.be.a('string').and.to.deep.equal('["=","some/resource","MessageId",1395591341000,{},"modified resource body"]');
   });
 
+
+  it('serialize modified [v2]', function() {
+    expect(sjmp.serialize(mock.modified(2))[0]).to.equal('=/2');
+  });
+
+
   it('serialize added', function() {
-    var result = sjmp.serialize(added, false);
+    var result = sjmp.serialize(mock.added(1), false);
 
     expect(result).to.be.an('array');
     expect(result).to.have.length(6);
     expect(result).to.deep.equal(['+', 'some/resource', 'MessageId', 1395591341000, {}, 'added resource body']);
 
-    result = sjmp.serialize(added, true);
-
-    expect(result).to.be.an('string');
-    expect(result).to.deep.equal('["+","some/resource","MessageId",1395591341000,{},"added resource body"]');
+    result = sjmp.serialize(mock.added(1), true);
+    expect(result).to.be.a('string').and.to.deep.equal('["+","some/resource","MessageId",1395591341000,{},"added resource body"]');
   });
 
+
+  it('serialize added [v2]', function() {
+    expect(sjmp.serialize(mock.added(2))[0]).to.equal('+/2');
+  });
+
+
   it('serialize deleted', function() {
-    var result = sjmp.serialize(deleted, false);
+    var result = sjmp.serialize(mock.deleted(1), false);
 
     expect(result).to.be.an('array');
     expect(result).to.have.length(6);
     expect(result).to.deep.equal(['-', 'some/resource', 'MessageId', 1395591341000, {}, 'deleted resource body']);
 
-    result = sjmp.serialize(deleted, true);
-
-    expect(result).to.be.an('string');
-    expect(result).to.deep.equal('["-","some/resource","MessageId",1395591341000,{},"deleted resource body"]');
+    result = sjmp.serialize(mock.deleted(1), true);
+    expect(result).to.be.a('string').and.to.deep.equal('["-","some/resource","MessageId",1395591341000,{},"deleted resource body"]');
   });
+
+
+  it('serialize deleted [v2]', function() {
+    expect(sjmp.serialize(mock.deleted(2))[0]).to.equal('-/2');
+  });
+
 
   it('serialize various date format', function() {
     const tests = [
@@ -166,19 +127,30 @@ describe('Deserialize', function() {
   var result;
   var i;
 
+
   it('deserialize request', function() {
     var tests = [
       ['<get', 'some/resource', 'MessageId', 1395591341000, {}, 'request body'],
       '["<","some/resource","MessageId",1395591341000,{},"request body"]'
     ];
 
-    for (i = 0; i < tests.length; ++i) {
-      result = sjmp.deserialize(tests[i]);
-
-      expect(result).to.be.an('object');
-      expect(result).to.deep.equal(request);
+    for (let i of tests) {
+      expect(sjmp.deserialize(i)).to.be.an('object').and.to.deep.equal(mock.request(1));
     }
   });
+
+
+  it('deserialize request [v2]', function() {
+    var tests = [
+      ['<get/2', 'some/resource', 'MessageId', 1395591341000, {}, 'request body'],
+      '["</2","some/resource","MessageId",1395591341000,{},"request body"]'
+    ];
+
+    for (let i of tests) {
+      expect(sjmp.deserialize(i)).to.be.an('object').and.to.deep.equal(mock.request(2));
+    }
+  });
+
 
   it('deserialize reply', function() {
     var tests = [
@@ -190,7 +162,7 @@ describe('Deserialize', function() {
       result = sjmp.deserialize(tests[i]);
 
       expect(result).to.be.an('object');
-      expect(result).to.deep.equal(reply);
+      expect(result).to.deep.equal(mock.reply(1));
     }
   });
 
@@ -204,7 +176,7 @@ describe('Deserialize', function() {
       result = sjmp.deserialize(tests[i]);
 
       expect(result).to.be.an('object');
-      expect(result).to.deep.equal(modified);
+      expect(result).to.deep.equal(mock.modified(1));
     }
   });
 
@@ -218,7 +190,7 @@ describe('Deserialize', function() {
       result = sjmp.deserialize(tests[i]);
 
       expect(result).to.be.an('object');
-      expect(result).to.deep.equal(added);
+      expect(result).to.deep.equal(mock.added(1));
     }
   });
 
@@ -232,7 +204,7 @@ describe('Deserialize', function() {
       result = sjmp.deserialize(tests[i]);
 
       expect(result).to.be.an('object');
-      expect(result).to.deep.equal(deleted);
+      expect(result).to.deep.equal(mock.deleted(1));
     }
   });
 
@@ -244,7 +216,6 @@ describe('Deserialize', function() {
       {},
       666,
       '["f", "res", "id"]',
-      '["<get/2", "res", "packet-id"]',
       '[">bad", "res", "packet-id"]',
       '[">", 200, 0]',
       '[">", 200, "id"]',

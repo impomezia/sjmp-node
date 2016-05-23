@@ -1,3 +1,6 @@
+# v1.2.0
+ - Enabled protocol versioning.
+
 # v1.1.3
  - Restore ES5 compatibility.
 
@@ -11,4 +14,4 @@
  - Improved `serialize` performance.
 
 # v1.0.0
-- Initial release.
+ - Initial release.
