@@ -64,15 +64,24 @@ describe('Serialize', function() {
   it('Invalid packets should be serialized as null', () => {
     const invalid = [
       0,
-      { type: '<', method: 'get', resource: 'some/resource', date: 0, headers: {}, body: 'request body' },
-      { type: '<', method: 'get', resource: 'some/resource', id: '123', date: 0, headers: {}, body: 'request body' },
-      { type: '<', method: 'get', id: '1234', date: 0, headers: {}, body: 'request body' },
-      { type: '<', method: 'get', resource: 'some/resource', id: '1234', date: 0, headers: this, body: 'request body' }
+      { method: 'get', resource: 'some/resource', date: 0, headers: {}, body: 'request body' },
+      { method: 'get', resource: 'some/resource', id: '123', date: 0, headers: {}, body: 'request body' },
+      { method: 'get', id: '1234', date: 0, headers: {}, body: 'request body' },
+      { method: 'get', resource: 'some/resource', id: '1234', date: 0, headers: this, body: 'request body' }
     ];
 
     for (let i of invalid) {
       expect(sjmp.request(i, true)).to.be.a('null');
+      expect(sjmp.reply(i, true)).to.be.a('null');
+      expect(sjmp.event(i, true)).to.be.a('null');
     }
+  });
+
+
+  it('Request method should be optional', () => {
+    const result = sjmp.request({ resource: '<some/resource', id: 'iddq'});
+
+    expect(result).to.equal('[1,"<some/resource","iddq",null]');
   });
 });
 
@@ -105,6 +114,7 @@ describe('Deserialize', function() {
     }
   });
 
+
   it('parse modified', function() {
     const TESTS = [
       [2, '=some/resource', 'iddqd', 'modified resource body',1395591341000, {}],
@@ -118,7 +128,8 @@ describe('Deserialize', function() {
     }
   });
 
-  it('deserialize added', function() {
+
+  it('parse added', function() {
     const TESTS = [
       [2, '+some/resource', 'iddqd', 'added resource body',1395591341000, {}],
       '[2,"+some/resource","iddqd","added resource body",1395591341000,{}]'
@@ -131,7 +142,8 @@ describe('Deserialize', function() {
     }
   });
 
-  it('deserialize deleted', function() {
+
+  it('parse deleted', function() {
     const TESTS = [
       [2, '-some/resource', 'iddqd', 'deleted resource body',1395591341000, {}],
       '[2,"-some/resource","iddqd","deleted resource body",1395591341000,{}]'
@@ -143,6 +155,7 @@ describe('Deserialize', function() {
       expect(sjmp.parse(i)).to.be.an('object').and.to.deep.equal(RESULT);
     }
   });
+
 
   it('Invalid packets should be deserialized as null', function() {
     const INVALID = [
@@ -164,5 +177,13 @@ describe('Deserialize', function() {
     for (let i of INVALID) {
       expect(sjmp.parse(i)).to.be.a('null');
     }
+  });
+
+
+  it('Should support optional data', () => {
+    const result = sjmp.parse('[1,"<some/resource","iddq",null]');
+
+    expect(result.date).to.equal(0);
+    expect(result.headers).to.deep.equal({});
   });
 });
