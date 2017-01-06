@@ -36,12 +36,12 @@ const METHODS_REVERSE = {
  * @param {Boolean}       [json] true to generate JSON instead of array.
  * @returns {Array|String|null}
  */
-function request(packet, json = true) {
+function request(packet, json) {
   if (!_check(packet)) {
     return null;
   }
 
-  return _serialize(packet, [ 1, (METHODS[packet.method] || '') + packet.resource, packet.id, packet.body ], json);
+  return _serialize(packet, [1, (METHODS[packet.method] || '') + packet.resource, packet.id, packet.body], json);
 }
 
 
@@ -58,12 +58,12 @@ function request(packet, json = true) {
  * @param {Boolean}       [json] true to generate JSON instead of array.
  * @returns {Array|String|null}
  */
-function reply(packet, json = true) {
+function reply(packet, json) {
   if (!_check(packet)) {
     return null;
   }
 
-  return _serialize(packet, [ packet.status || 500, packet.resource, packet.id, packet.body ], json);
+  return _serialize(packet, [packet.status || 500, packet.resource, packet.id, packet.body], json);
 }
 
 
@@ -80,12 +80,12 @@ function reply(packet, json = true) {
  * @param {Boolean}       [json] true to generate JSON instead of array.
  * @returns {Array|String|null}
  */
-function event(packet, json = true) {
+function event(packet, json) {
   if (!_check(packet)) {
     return null;
   }
 
-  return _serialize(packet, [ 2, packet.resource, packet.id, packet.body ], json);
+  return _serialize(packet, [2, packet.resource, packet.id, packet.body], json);
 }
 
 
@@ -103,11 +103,10 @@ function _serialize(packet, data, json) {
     data[5] = packet.headers;
   }
 
-  if (json === true) {
+  if (json !== false) {
     try {
       return JSON.stringify(data);
-    }
-    catch (e) {
+    } catch (e) {
       return null;
     }
   }
@@ -120,8 +119,7 @@ function parse(packet) {
   if (typeof packet === 'string') {
     try {
       packet = JSON.parse(packet);
-    }
-    catch (e) {
+    } catch (e) {
       return null;
     }
   }

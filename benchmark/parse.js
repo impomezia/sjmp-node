@@ -1,7 +1,7 @@
 'use strict';
 
 const benchmark = require('./benchmark');
-const sjmp      = require('../src/sjmp');
+const sjmp      = require('../lib/sjmp');
 
 const REQUEST = '[1,"<some/resource","idkfa","request body",1395591341000,{}]';
 const REPLY   = '[400,"=some/resource","idkfa","reply body",1395591341000,{}]';

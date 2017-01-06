@@ -1,7 +1,7 @@
 'use strict';
 
 const expect = require('chai').expect;
-const sjmp   = require('../index');
+const sjmp   = require('../src/sjmp');
 const mock   = require('./mock');
 
 
@@ -166,12 +166,3 @@ describe('Deserialize', function() {
     }
   });
 });
-
-
-console.log(sjmp.request({
-  method: 'post',
-  resource: 'some/resource',
-  date: 1395591341000,
-  id: 'iddqd',
-  body: "request body"
-}));

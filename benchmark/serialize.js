@@ -1,7 +1,7 @@
 'use strict';
 
 const benchmark = require('./benchmark');
-const sjmp      = require('../src/sjmp');
+const sjmp      = require('../lib/sjmp');
 const mock      = require('../test/mock');
 
 const REQUEST = mock.request();
