@@ -1,3 +1,3 @@
 'use strict';
 
-module.exports = require('./lib/sjmp');
+module.exports = require('./src/sjmp');

@@ -1,7 +1,7 @@
 'use strict';
 
 const benchmark = require('./benchmark');
-const sjmp      = require('../lib/sjmp');
+const sjmp      = require('../src/sjmp');
 const mock      = require('../test/mock');
 
 const REQUEST = mock.request();
@@ -10,32 +10,32 @@ const EVENT   = mock.modified();
 
 
 function serializeRequest() {
-  sjmp.serialize(REQUEST, false)
+  sjmp.request(REQUEST, false)
 }
 
 
 function serializeRequestJSON() {
-  sjmp.serialize(REQUEST, true)
+  sjmp.request(REQUEST, true)
 }
 
 
 function serializeReply() {
-  sjmp.serialize(REPLY, false)
+  sjmp.reply(REPLY, false)
 }
 
 
 function serializeReplyJSON() {
-  sjmp.serialize(REPLY, true)
+  sjmp.reply(REPLY, true)
 }
 
 
 function serializeEvent() {
-  sjmp.serialize(EVENT, false)
+  sjmp.event(EVENT, false)
 }
 
 
 function serializeEventJSON() {
-  sjmp.serialize(EVENT, true)
+  sjmp.event(EVENT, true)
 }
 
 
