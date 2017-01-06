@@ -1,11 +1,9 @@
 'use strict';
 
 
-module.exports.request = function(version) {
+module.exports.request = function() {
   return {
-    type:     '<',
     method:   'get',
-    version:  version,
     resource: 'some/resource',
     id:       'MessageId',
     date:     1395591341000,
@@ -15,12 +13,10 @@ module.exports.request = function(version) {
 };
 
 
-module.exports.reply = function(version) {
+module.exports.reply = function() {
   return {
-    type:      '>',
     status:    400,
     resource: 'some/resource',
-    version:   version,
     id:        'MessageId',
     date:      1395591341000,
     headers:  {},
@@ -29,11 +25,9 @@ module.exports.reply = function(version) {
 };
 
 
-module.exports.modified = function(version) {
+module.exports.modified = function() {
   return {
-    type:     '=',
-    version:  version,
-    resource: 'some/resource',
+    resource: '=some/resource',
     id:       'MessageId',
     date:     1395591341000,
     headers:  {},
@@ -42,11 +36,9 @@ module.exports.modified = function(version) {
 };
 
 
-module.exports.added = function(version) {
+module.exports.added = function() {
   return {
-    type:     '+',
-    version:  version,
-    resource: 'some/resource',
+    resource: '+some/resource',
     id:       'MessageId',
     date:     1395591341000,
     headers:  {},
@@ -55,11 +47,9 @@ module.exports.added = function(version) {
 };
 
 
-module.exports.deleted = function(version) {
+module.exports.deleted = function() {
   return {
-    type:      '-',
-    version:   version,
-    resource: 'some/resource',
+    resource: '-some/resource',
     id:       'MessageId',
     date:     1395591341000,
     headers:  {},

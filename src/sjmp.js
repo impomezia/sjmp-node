@@ -1,18 +1,18 @@
 'use strict';
 
-var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
 
-var METHODS = {
-  get: '<',
+const METHODS = {
+  get:    '<',
   search: '?',
-  post: '+',
-  put: '=',
+  post:   '+',
+  put:    '=',
   delete: '-',
-  sub: '&',
-  unsub: '~'
+  sub:    '&',
+  unsub:  '~'
 };
 
-var METHODS_REVERSE = {
+
+const METHODS_REVERSE = {
   '<': 'get',
   '?': 'search',
   '+': 'post',
@@ -21,6 +21,7 @@ var METHODS_REVERSE = {
   '&': 'sub',
   '~': 'unsub'
 };
+
 
 /**
  * Serialize request to array or JSON.
@@ -43,6 +44,7 @@ function request(packet, json) {
   return _serialize(packet, [1, (METHODS[packet.method] || '') + packet.resource, packet.id, packet.body], json);
 }
 
+
 /**
  * Serialize reply to array or JSON.
  *
@@ -63,6 +65,7 @@ function reply(packet, json) {
 
   return _serialize(packet, [packet.status || 500, packet.resource, packet.id, packet.body], json);
 }
+
 
 /**
  * Serialize event to array or JSON.
@@ -85,16 +88,18 @@ function event(packet, json) {
   return _serialize(packet, [2, packet.resource, packet.id, packet.body], json);
 }
 
+
 function _check(packet) {
   return typeof packet.resource === 'string' && packet.resource.length > 2 && typeof packet.id === 'string' && packet.id.length >= 4;
 }
+
 
 function _serialize(packet, data, json) {
   if (packet.date) {
     data[4] = packet.date;
   }
 
-  if (_typeof(packet.headers) === 'object') {
+  if (typeof packet.headers === 'object') {
     data[5] = packet.headers;
   }
 
@@ -108,6 +113,7 @@ function _serialize(packet, data, json) {
 
   return data;
 }
+
 
 function parse(packet) {
   if (typeof packet === 'string') {
@@ -137,19 +143,21 @@ function parse(packet) {
   return null;
 }
 
+
 function _parse(type, packet) {
   return {
-    type: type,
-    method: METHODS_REVERSE[packet[1].charAt(0)],
+    type:     type,
+    method:   METHODS_REVERSE[packet[1].charAt(0)],
     resource: packet[1],
-    id: packet[2],
-    body: packet[3],
-    date: packet[4] || 0,
-    headers: packet[5] || {}
+    id:       packet[2],
+    body:     packet[3],
+    date:     packet[4] || 0,
+    headers:  packet[5] || {}
   };
 }
 
+
 exports.request = request;
-exports.reply = reply;
-exports.event = event;
-exports.parse = parse;
+exports.reply   = reply;
+exports.event   = event;
+exports.parse   = parse;
