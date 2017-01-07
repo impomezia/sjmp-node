@@ -93,7 +93,7 @@ describe('Deserialize', function() {
       '[1,"<some/resource","iddqd","request body",1395591341000,{}]'
     ];
 
-    const RESULT = { type: 'request', method: 'get', status: 1, resource: '<some/resource', id: 'iddqd', body: 'request body', date: 1395591341000, headers: {} };
+    const RESULT = { type: 'request', method: 'get', resource: 'some/resource', id: 'iddqd', body: 'request body', date: 1395591341000, headers: {} };
 
     for (let i of TESTS) {
       expect(sjmp.parse(i)).to.be.an('object').and.to.deep.equal(RESULT);
@@ -107,7 +107,7 @@ describe('Deserialize', function() {
       '[400,"<some/resource","iddqd","reply body",1395591341000,{}]'
     ];
 
-    const RESULT = { type: 'reply', method: 'get', status: 400, resource: '<some/resource', id: 'iddqd', body: 'reply body', date: 1395591341000, headers: {} };
+    const RESULT = { type: 'reply', method: 'get', status: 400, resource: 'some/resource', id: 'iddqd', body: 'reply body', date: 1395591341000, headers: {} };
 
     for (let i of TESTS) {
       expect(sjmp.parse(i)).to.be.an('object').and.to.deep.equal(RESULT);
@@ -121,7 +121,7 @@ describe('Deserialize', function() {
       '[2,"=some/resource","iddqd","modified resource body",1395591341000,{}]'
     ];
 
-    const RESULT = { type: 'event', method: 'put', status: 2, resource: '=some/resource', id: 'iddqd', body: 'modified resource body', date: 1395591341000, headers: {} };
+    const RESULT = { type: 'event', resource: '=some/resource', id: 'iddqd', body: 'modified resource body', date: 1395591341000, headers: {} };
 
     for (let i of TESTS) {
       expect(sjmp.parse(i)).to.be.an('object').and.to.deep.equal(RESULT);
@@ -135,7 +135,7 @@ describe('Deserialize', function() {
       '[2,"+some/resource","iddqd","added resource body",1395591341000,{}]'
     ];
 
-    const RESULT = { type: 'event', method: 'post', status: 2, resource: '+some/resource', id: 'iddqd', body: 'added resource body', date: 1395591341000, headers: {} };
+    const RESULT = { type: 'event', resource: '+some/resource', id: 'iddqd', body: 'added resource body', date: 1395591341000, headers: {} };
 
     for (let i of TESTS) {
       expect(sjmp.parse(i)).to.be.an('object').and.to.deep.equal(RESULT);
@@ -149,7 +149,7 @@ describe('Deserialize', function() {
       '[2,"-some/resource","iddqd","deleted resource body",1395591341000,{}]'
     ];
 
-    const RESULT = { type: 'event', method: 'delete', status: 2, resource: '-some/resource', id: 'iddqd', body: 'deleted resource body', date: 1395591341000, headers: {} };
+    const RESULT = { type: 'event', resource: '-some/resource', id: 'iddqd', body: 'deleted resource body', date: 1395591341000, headers: {} };
 
     for (let i of TESTS) {
       expect(sjmp.parse(i)).to.be.an('object').and.to.deep.equal(RESULT);
@@ -181,9 +181,17 @@ describe('Deserialize', function() {
 
 
   it('Should support optional data', () => {
-    const result = sjmp.parse('[1,"<some/resource","iddq",null]');
+    const TESTS = [
+      '[1,"<some/resource","iddq",null]',
+      '[2,"=some/resource","iddq",null]',
+      '[200,"<some/resource","iddq",null]',
+    ];
 
-    expect(result.date).to.equal(0);
-    expect(result.headers).to.deep.equal({});
+    for (let i of TESTS) {
+      const result = sjmp.parse(i);
+
+      expect(result.date).to.equal(0);
+      expect(result.headers).to.deep.equal({});
+    }
   });
 });

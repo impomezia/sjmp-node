@@ -128,28 +128,54 @@ function parse(packet) {
     return null;
   }
 
-  if (packet[0] === 1) {
-    return _parse('request', packet);
+  const type = packet[0];
+  if (type === 1) {
+    return _request(packet)
   }
 
-  if (packet[0] === 2) {
-    return _parse('event', packet);
+  if (type === 2) {
+    return _event(packet);
   }
 
-  if (packet[0] > 99) {
-    return _parse('reply', packet);
+  if (type > 99) {
+    return _reply(packet, type);
   }
 
   return null;
 }
 
 
-function _parse(type, packet) {
+function _request(packet) {
   return {
-    type:     type,
+    type:     'request',
     method:   METHODS_REVERSE[packet[1].charAt(0)],
-    status:   packet[0],
+    resource: packet[1].substr(1),
+    id:       packet[2],
+    body:     packet[3],
+    date:     packet[4] || 0,
+    headers:  packet[5] || {}
+  };
+}
+
+
+function _event(packet) {
+  return {
+    type:     'event',
     resource: packet[1],
+    id:       packet[2],
+    body:     packet[3],
+    date:     packet[4] || 0,
+    headers:  packet[5] || {}
+  };
+}
+
+
+function _reply(packet, status) {
+  return {
+    type:     'reply',
+    method:   METHODS_REVERSE[packet[1].charAt(0)],
+    status:   status,
+    resource: packet[1].substr(1),
     id:       packet[2],
     body:     packet[3],
     date:     packet[4] || 0,
