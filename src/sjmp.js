@@ -148,6 +148,7 @@ function _parse(type, packet) {
   return {
     type:     type,
     method:   METHODS_REVERSE[packet[1].charAt(0)],
+    status:   packet[0],
     resource: packet[1],
     id:       packet[2],
     body:     packet[3],
