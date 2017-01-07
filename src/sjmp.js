@@ -37,11 +37,7 @@ const METHODS_REVERSE = {
  * @returns {Array|String|null}
  */
 function request(packet, json) {
-  if (!_check(packet)) {
-    return null;
-  }
-
-  return _serialize(packet, [1, (METHODS[packet.method] || '') + packet.resource, packet.id, packet.body], json);
+  return _create(packet, 1, (METHODS[packet.method] || '') + packet.resource, json);
 }
 
 
@@ -49,6 +45,7 @@ function request(packet, json) {
  * Serialize reply to array or JSON.
  *
  * @param {Object}        packet
+ * @param {String}        packet.method "get", "search", "post", "put", "delete", "sub", "unsub".
  * @param {String}        packet.resource
  * @param {String}        packet.id
  * @param {*}             packet.body
@@ -59,11 +56,7 @@ function request(packet, json) {
  * @returns {Array|String|null}
  */
 function reply(packet, json) {
-  if (!_check(packet)) {
-    return null;
-  }
-
-  return _serialize(packet, [packet.status || 500, packet.resource, packet.id, packet.body], json);
+  return _create(packet, packet.status || 500, (METHODS[packet.method] || '') + packet.resource, json);
 }
 
 
@@ -81,11 +74,16 @@ function reply(packet, json) {
  * @returns {Array|String|null}
  */
 function event(packet, json) {
+  return _create(packet, 2, packet.resource, json);
+}
+
+
+function _create(packet, type, resource, json) {
   if (!_check(packet)) {
     return null;
   }
 
-  return _serialize(packet, [2, packet.resource, packet.id, packet.body], json);
+  return _serialize(packet, [type, resource, packet.id, packet.body], json);
 }
 
 
